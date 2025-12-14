@@ -11,4 +11,11 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  Rails.application.routes.draw do
+    resources :categories
+    resources :invoices
+    resources :invoice_items
+    root "home#index"
+    post "home/extract_invoice", to: "home#extract_invoice"
+  end
 end
