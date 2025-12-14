@@ -1,0 +1,88 @@
+<!-- Vista de Subir Boleta - Para usar como partial en Rails -->
+<div class="max-w-3xl mx-auto">
+  <div class="text-center mb-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-2">Sube tu boleta de compra</h2>
+    <p class="text-lg text-gray-600">
+      Acepta archivos PDF, JPG o PNG. Máximo 10MB.
+    </p>
+  </div>
+
+  <div id="upload-dropzone" class="border-2 border-dashed rounded-2xl p-12 text-center transition-all border-gray-300 bg-white hover:border-gray-400">
+    
+    <!-- Estado inicial - Sin archivo -->
+    <div id="upload-empty-state">
+      <div class="flex justify-center mb-4">
+        <div class="p-4 bg-blue-100 rounded-full">
+          <i data-lucide="upload" class="size-8 text-blue-600"></i>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <p class="text-lg font-medium text-gray-900 mb-2">
+          Arrastra tu archivo aquí
+        </p>
+        <p class="text-gray-500">o</p>
+      </div>
+
+      <button onclick="document.getElementById('file-input').click()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+        <i data-lucide="upload" class="size-4"></i>
+        Seleccionar archivo
+      </button>
+
+      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png" class="hidden" onchange="handleFileSelect(event)">
+    </div>
+    <button onclick="manualUpload()" class="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors inline-flex items-center gap-1 text-sm" style="margin-top: 10px;">
+      <i data-lucide="play" class="size-3"></i>
+      Cargar manualmente
+    </button>
+    <!-- Estado con archivo seleccionado -->
+    <div id="upload-selected-state" class="hidden">
+      <div class="space-y-4">
+        <div id="file-icon-container" class="flex items-center justify-center">
+          <!-- Icono dinámico -->
+        </div>
+        
+        <div class="flex items-center justify-center gap-2 text-green-600">
+          <i data-lucide="check-circle-2" class="size-5"></i>
+          <span class="font-medium">Archivo seleccionado</span>
+        </div>
+        
+        <div class="bg-white rounded-lg p-4 max-w-md mx-auto shadow-sm">
+          <p id="file-name" class="text-lg font-medium text-gray-900 truncate"></p>
+          <p id="file-size" class="text-sm text-gray-500 mt-1"></p>
+        </div>
+
+        <div class="flex gap-3 justify-center pt-4">
+          <button onclick="clearFileSelection()" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+            Cambiar archivo
+          </button>
+          <button onclick="processFile()" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            Procesar boleta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-6">
+    <h3 class="text-lg font-semibold text-blue-900 mb-3">¿Cómo funciona?</h3>
+    <ol class="space-y-2 text-sm text-blue-800">
+      <li class="flex gap-2">
+        <span class="flex-shrink-0 font-semibold">1.</span>
+        <span>Sube tu boleta en formato PDF o imagen</span>
+      </li>
+      <li class="flex gap-2">
+        <span class="flex-shrink-0 font-semibold">2.</span>
+        <span>La IA procesará automáticamente el contenido usando OCR</span>
+      </li>
+      <li class="flex gap-2">
+        <span class="flex-shrink-0 font-semibold">3.</span>
+        <span>Revisa y corrige los datos extraídos si es necesario</span>
+      </li>
+      <li class="flex gap-2">
+        <span class="flex-shrink-0 font-semibold">4.</span>
+        <span>Guarda la información en tu base de datos</span>
+      </li>
+    </ol>
+  </div>
+</div>

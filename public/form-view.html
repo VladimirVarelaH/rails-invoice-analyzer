@@ -1,0 +1,144 @@
+<!-- Vista de Formulario - Para usar como partial en Rails -->
+<form id="receipt-form" class="max-w-5xl mx-auto space-y-6" onsubmit="handleFormSubmit(event)">
+  
+  <!-- Success Alert -->
+  <div id="form-success-alert" class="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+    <i data-lucide="check-circle-2" class="size-5 text-green-600 flex-shrink-0 mt-0.5"></i>
+    <div class="flex-1">
+      <h3 class="font-semibold text-green-900 mb-1">
+        Extracción completada con éxito
+      </h3>
+      <p class="text-sm text-green-700">
+        Revisa los datos extraídos y realiza correcciones si es necesario antes de guardar.
+      </p>
+    </div>
+    <button type="button" onclick="document.getElementById('form-success-alert').remove()" class="text-green-600 hover:text-green-800">
+      <i data-lucide="x" class="size-4"></i>
+    </button>
+  </div>
+
+  <!-- Datos del Emisor -->
+  <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+    <h2 class="text-xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-200">
+      Datos del Emisor
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          RUT Emisor
+        </label>
+        <input type="text" id="rut" name="rut" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Razón Social
+        </label>
+        <input type="text" id="razon_social" name="razon_social" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Giro
+        </label>
+        <input type="text" id="giro" name="giro" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Comuna
+        </label>
+        <input type="text" id="comuna" name="comuna" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Dirección
+        </label>
+        <input type="text" id="direccion" name="direccion" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Folio
+        </label>
+        <input type="text" id="folio" name="folio" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Fecha
+        </label>
+        <input type="date" id="fecha" name="fecha" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+
+      <div class="md:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          <i data-lucide="tag" class="inline size-4 mr-1"></i>
+          Categoría del Gasto
+        </label>
+        <select id="categoria" name="categoria" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="">Selecciona una categoría</option>
+        </select>
+        <p class="text-xs text-gray-500 mt-1">
+          Esta categoría te ayudará a clasificar y analizar tus gastos
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Productos/Servicios -->
+  <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+      <h2 class="text-xl font-bold text-gray-900">
+        Productos/Servicios
+      </h2>
+      <button type="button" onclick="addFormItem()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2 text-sm">
+        <i data-lucide="plus" class="size-4"></i>
+        Agregar ítem
+      </button>
+    </div>
+
+    <div id="items-container" class="space-y-4">
+      <!-- Los items se agregan dinámicamente -->
+    </div>
+
+    <div class="mt-6 pt-6 border-t border-gray-200">
+      <div class="max-w-md ml-auto space-y-3">
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">Subtotal:</span>
+          <span id="subtotal-display" class="text-lg text-gray-900">$0</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-700 font-medium">IVA (19%):</span>
+          <span id="iva-display" class="text-lg text-gray-900">$0</span>
+        </div>
+        <div class="flex justify-between items-center pt-3 border-t border-gray-200">
+          <span class="text-lg font-bold text-gray-900">Total:</span>
+          <span id="total-display" class="text-2xl font-bold text-gray-900">$0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Warning -->
+  <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-start gap-3">
+    <i data-lucide="alert-circle" class="size-5 text-yellow-600 flex-shrink-0 mt-0.5"></i>
+    <p class="text-sm text-yellow-800">
+      Revisa cuidadosamente todos los campos antes de guardar. Los datos se almacenarán en PostgreSQL.
+    </p>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-4 justify-end">
+    <button type="button" onclick="showView('upload')" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
+      <i data-lucide="x" class="size-4"></i>
+      Cancelar
+    </button>
+    <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+      <i data-lucide="save" class="size-4"></i>
+      Guardar en base de datos
+    </button>
+  </div>
+</form>

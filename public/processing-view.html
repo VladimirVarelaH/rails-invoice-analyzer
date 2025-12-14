@@ -1,0 +1,62 @@
+<!-- Vista de Procesamiento - Para usar como partial en Rails -->
+<div class="max-w-2xl mx-auto">
+  <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-12">
+    <div class="text-center space-y-8">
+      <div class="flex justify-center">
+        <div class="relative">
+          <div class="p-6 bg-blue-100 rounded-full">
+            <i data-lucide="loader-2" class="size-16 text-blue-600 animate-spin"></i>
+          </div>
+          <div class="absolute -top-2 -right-2 p-2 bg-yellow-400 rounded-full animate-pulse">
+            <i data-lucide="sparkles" class="size-6 text-white"></i>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">
+          Procesando tu boleta
+        </h2>
+        <p class="text-lg text-gray-600" id="processing-filename">
+          Estamos analizando tu archivo con inteligencia artificial
+        </p>
+      </div>
+
+      <div class="space-y-4 pt-4">
+        <div class="processing-step active">
+          <div class="flex items-center gap-3 p-4 rounded-lg border bg-blue-50 border-blue-200">
+            <div class="text-blue-600">
+              <i data-lucide="file-search" class="size-5"></i>
+            </div>
+            <span class="text-blue-900 font-medium">Extrayendo texto con OCR</span>
+            <i data-lucide="loader-2" class="size-4 text-blue-600 animate-spin ml-auto"></i>
+          </div>
+        </div>
+
+        <div class="processing-step">
+          <div class="flex items-center gap-3 p-4 rounded-lg border bg-gray-50 border-gray-200">
+            <div class="text-gray-400">
+              <i data-lucide="sparkles" class="size-5"></i>
+            </div>
+            <span class="text-gray-600 font-medium">Analizando con IA (OpenAI/Gemini)</span>
+          </div>
+        </div>
+
+        <div class="processing-step">
+          <div class="flex items-center gap-3 p-4 rounded-lg border bg-gray-50 border-gray-200">
+            <div class="text-gray-400">
+              <i data-lucide="database" class="size-5"></i>
+            </div>
+            <span class="text-gray-600 font-medium">Estructurando datos</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4">
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div id="processing-progress" class="bg-blue-600 h-2 rounded-full animate-pulse transition-all duration-500" style="width: 33%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

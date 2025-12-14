@@ -1,0 +1,133 @@
+<!-- Vista de Gastos - Para usar como partial en Rails -->
+<div class="space-y-6">
+  <!-- Header with CTA -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-3xl font-bold text-gray-900">Mis Gastos</h2>
+      <p class="text-gray-600 mt-1">
+        Visualiza y analiza tus boletas registradas
+      </p>
+    </div>
+    <button onclick="showView('upload')" class="px-5 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+      <i data-lucide="plus" class="size-5"></i>
+      Nueva Boleta
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <i data-lucide="filter" class="size-5 text-gray-600"></i>
+      <h3 class="text-lg font-semibold text-gray-900">Filtros</h3>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Categoría
+        </label>
+        <select id="filter-category" onchange="applyFilters()" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="Todas">Todas</option>
+          <option value="Alimentación">Alimentación</option>
+          <option value="Salud">Salud</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Vestuario">Vestuario</option>
+          <option value="Hogar">Hogar</option>
+          <option value="Educación">Educación</option>
+          <option value="Entretenimiento">Entretenimiento</option>
+          <option value="Servicios">Servicios</option>
+          <option value="Otros">Otros</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Fecha inicio
+        </label>
+        <div class="relative">
+          <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400"></i>
+          <input type="date" id="filter-start-date" onchange="applyFilters()" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Fecha fin
+        </label>
+        <div class="relative">
+          <i data-lucide="calendar" class="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-gray-400"></i>
+          <input type="date" id="filter-end-date" onchange="applyFilters()" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+    </div>
+
+    <div id="clear-filters-section" class="mt-4 pt-4 border-t border-gray-200 hidden">
+      <button onclick="clearFilters()" class="text-sm text-blue-600 hover:text-blue-700">
+        Limpiar filtros
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="summary-cards">
+    <!-- Se llenan dinámicamente con JavaScript -->
+  </div>
+
+  <!-- Category Breakdown -->
+  <div id="category-breakdown" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumen por Categoría</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="category-breakdown-grid">
+      <!-- Se llena dinámicamente con JavaScript -->
+    </div>
+  </div>
+
+  <!-- Receipts Table -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="p-6 border-b border-gray-200">
+      <h3 class="text-lg font-semibold text-gray-900">
+        Detalle de Boletas
+        <span class="ml-2 text-gray-500" id="receipts-count"></span>
+      </h3>
+    </div>
+
+    <div id="receipts-empty" class="p-12 text-center hidden">
+      <div class="inline-flex items-center justify-center p-4 bg-gray-100 rounded-full mb-4">
+        <i data-lucide="filter" class="size-8 text-gray-400"></i>
+      </div>
+      <p class="text-lg text-gray-600 mb-2">No se encontraron boletas</p>
+      <p class="text-sm text-gray-500">
+        Intenta ajustar los filtros o carga una nueva boleta
+      </p>
+    </div>
+
+    <div id="receipts-table-container" class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50 border-b border-gray-200">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Fecha
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Emisor
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Categoría
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Folio
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Total
+            </th>
+            <th class="px-6 py-3 text-center text-xs font-medium text-gray-600 uppercase tracking-wider">
+              Detalle
+            </th>
+          </tr>
+        </thead>
+        <tbody id="receipts-tbody" class="divide-y divide-gray-200">
+          <!-- Se llena dinámicamente con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

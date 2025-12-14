@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="csrf-token" content=<%= csrf_meta_tags % >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procesador de Boletas</title>
+  <!-- Tailwind CSS CDN (En Rails usa: gem 'tailwindcss-rails') -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  
+  <!-- Header -->
+  <header class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="p-2 bg-blue-600 rounded-lg">
+            <i data-lucide="receipt" class="size-6 text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold text-gray-900">Procesador de Boletas</h1>
+            <p class="text-sm text-gray-600">
+              Digitaliza tus boletas chilenas automáticamente con IA
+            </p>
+          </div>
+        </div>
+
+        <nav class="flex gap-2" id="main-nav">
+          <button onclick="showView('expenses')" id="nav-expenses" class="px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2 bg-blue-100 text-blue-700">
+            <i data-lucide="bar-chart-3" class="size-4"></i>
+            Mis Gastos
+          </button>
+          <button onclick="showView('upload')" id="nav-upload" class="px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2 text-gray-600 hover:bg-gray-100">
+            <i data-lucide="upload" class="size-4"></i>
+            Nueva Boleta
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-8 max-w-6xl">
+    
+    <!-- Vista de Gastos -->
+    <div id="view-expenses" class="view-container">
+      <!-- Se carga dinámicamente desde expenses-view.html -->
+    </div>
+
+    <!-- Vista de Subir Boleta -->
+    <div id="view-upload" class="view-container hidden">
+      <!-- Se carga dinámicamente desde upload-view.html -->
+    </div>
+
+    <!-- Vista de Procesamiento -->
+    <div id="view-processing" class="view-container hidden">
+      <!-- Se carga dinámicamente desde processing-view.html -->
+    </div>
+
+    <!-- Vista de Formulario -->
+    <div id="view-form" class="view-container hidden">
+      <!-- Se carga dinámicamente desde form-view.html -->
+    </div>
+
+    <!-- Vista de Éxito -->
+    <div id="view-success" class="view-container hidden">
+      <!-- Se carga dinámicamente desde success-view.html -->
+    </div>
+
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    // Inicializar Lucide icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
