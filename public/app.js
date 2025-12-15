@@ -17,80 +17,6 @@ let appState = {
 
 // Datos de ejemplo (en Rails vendrían desde el backend)
 var CATEGORIES = [];
-const SAMPLE_RECEIPTS = [
-  {
-    id: '1',
-    rut: '76.123.456-7',
-    razonSocial: 'Supermercado Santa Isabel S.A.',
-    giro: 'Venta al por menor de alimentos',
-    direccion: 'Av. Libertador Bernardo O\'Higgins 1234',
-    comuna: 'Santiago',
-    folio: '00123456',
-    fecha: '2025-12-08',
-    categoria: 'Alimentación',
-    items: [
-      { descripcion: 'Pan Hallulla x6', cantidad: 1, precioUnitario: 1500, total: 1500 },
-      { descripcion: 'Leche Entera 1L', cantidad: 2, precioUnitario: 950, total: 1900 },
-      { descripcion: 'Queso Mantecoso 250g', cantidad: 1, precioUnitario: 2890, total: 2890 }
-    ],
-    subtotal: 6290,
-    iva: 1195,
-    total: 7485
-  },
-  {
-    id: '2',
-    rut: '96.789.123-4',
-    razonSocial: 'Farmacias Cruz Verde S.A.',
-    giro: 'Venta de productos farmacéuticos',
-    direccion: 'Av. Providencia 2589',
-    comuna: 'Providencia',
-    folio: '00234567',
-    fecha: '2025-12-05',
-    categoria: 'Salud',
-    items: [
-      { descripcion: 'Paracetamol 500mg x20', cantidad: 2, precioUnitario: 2500, total: 5000 },
-      { descripcion: 'Vitamina C 1000mg', cantidad: 1, precioUnitario: 8900, total: 8900 }
-    ],
-    subtotal: 13900,
-    iva: 2641,
-    total: 16541
-  },
-  {
-    id: '3',
-    rut: '77.456.789-1',
-    razonSocial: 'Copec S.A.',
-    giro: 'Venta de combustibles',
-    direccion: 'Av. Apoquindo 4567',
-    comuna: 'Las Condes',
-    folio: '00345678',
-    fecha: '2025-12-10',
-    categoria: 'Transporte',
-    items: [
-      { descripcion: 'Bencina 93 - 40 litros', cantidad: 1, precioUnitario: 32000, total: 32000 }
-    ],
-    subtotal: 32000,
-    iva: 6080,
-    total: 38080
-  },
-  {
-    id: '4',
-    rut: '78.234.567-8',
-    razonSocial: 'Falabella Retail S.A.',
-    giro: 'Venta al por menor',
-    direccion: 'Mall Costanera Center',
-    comuna: 'Providencia',
-    folio: '00456789',
-    fecha: '2025-11-28',
-    categoria: 'Vestuario',
-    items: [
-      { descripcion: 'Camisa Hombre Talla M', cantidad: 1, precioUnitario: 19990, total: 19990 },
-      { descripcion: 'Pantalón Jean Talla 32', cantidad: 1, precioUnitario: 29990, total: 29990 }
-    ],
-    subtotal: 49980,
-    iva: 9496,
-    total: 59476
-  }
-];
 
 
 function camelCase(str) {
@@ -99,27 +25,20 @@ function camelCase(str) {
 }
 
 function formatDateDDMMYYYY(dateStr) {
-  console.log("Formatting date:", dateStr);
   if (!dateStr) return 'No disponible';
   return dateStr.split('T')[0];
 }
 
 function normalizeInvoice(inv) {
-  // Convertir precios con puntos o números a enteros
-  const parsePrice = (price) => {
-    if (price == null) return 0;
-    if (typeof price === 'number') return price;
-    return parseInt(price.toString().replace(/\./g, ''), 10);
-  };
-
   // TOTAL incluye IVA → sumar todo
-  const total = inv.invoice_items.reduce((sum, item) => {
+  let total = inv.invoice_items.reduce((sum, item) => {
     return sum + item.qtty * item.price;
   }, 0);
+  total = Math.round(total);
 
   // Calcular subtotal e IVA desde el total con IVA incluido
   const subtotal = Math.round(total / 1.19);
-  const iva = total - subtotal;
+  const iva = Math.round(total - subtotal);
 
   return {
     id: inv.id,
@@ -128,9 +47,10 @@ function normalizeInvoice(inv) {
     giro: 'No disponible',
     direccion: inv.address || 'No disponible',
     comuna: inv.city_name || 'No disponible',
-    folio: inv.id,
+    folio: 'No disponible',
     fecha: inv.billed_at,
     categoria: camelCase(inv.category?.name) || 'Otros',
+    categoriaId: inv.category?.id || null,
 
     items: inv.invoice_items.map(it => {
       const unitPrice = Math.round(it.price || 0);
@@ -149,15 +69,8 @@ function normalizeInvoice(inv) {
 }
 
 function normalizeResponse(inv) {
-  // Convertir precios tipo "1.380" a enteros (1380)
-  const parsePrice = (priceStr) => {
-    if (!priceStr) return 0;
-    // Eliminar puntos y convertir a número
-    return parseInt(priceStr.replace(/\./g, ''), 10);
-  };
-
   const total = inv.invoice_items.reduce((sum, item) => {
-    return sum + item.qtty * parsePrice(item.price);
+    return sum + item.qtty * item.price;
   }, 0);
 
   const subtotal = Math.round(total / 1.19);
@@ -172,12 +85,15 @@ function normalizeResponse(inv) {
     folio: inv.invoice_id || 'No disponible',
     fecha: formatDateDDMMYYYY(inv.billed_at) || 'No disponible',
     categoria: camelCase(inv.category?.name) || 'Otros',
-    items: inv.invoice_items.map(it => ({
-      descripcion: it.name,
-      cantidad: it.qtty,
-      precioUnitario: parsePrice(it.price),
-      total: Math.ceil(it.qtty * parsePrice(it.price))
-    })),
+    items: inv.invoice_items.map(it => {
+      const price = it.price.replace(/\./g, '').replace(',', '.');
+      return {
+        descripcion: it.name,
+        cantidad: it.qtty,
+        precioUnitario: price,
+        total: Math.ceil(it.qtty * price)
+      }
+    }),
     subtotal,
     iva,
     total
@@ -198,6 +114,18 @@ function normalizeCategories(categoriesArray) {
   return normalized;
 }
 
+function hasNonEmptyKey(obj, key) {
+  if (!obj || typeof obj !== "object") {
+    return false; // Not a valid object
+  }
+
+  // Check if key exists
+  if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+    return false; // Key is unset
+  }
+
+  return true; // Key exists and has a non-empty value
+}
 
 // ============================================
 // INICIALIZACIÓN
@@ -454,11 +382,30 @@ function renderReceiptsTable(receipts) {
             ${receipt.categoria}
           </span>
         </td>
-        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-          ${receipt.folio}
-        </td>
         <td class="px-6 py-4 whitespace-nowrap text-right font-semibold text-gray-900">
           $${receipt.total.toLocaleString('es-CL')}
+        </td>
+        <td>
+          <div class="flex items-center justify-center gap-2">
+            <!-- Botón Editar -->
+            <button
+              class="inline-flex items-center justify-center p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              title="Editar"
+              onclick="editReceipt(${receipt.id})"
+            >
+              <i data-lucide="pencil" class="size-4"></i>
+            </button>
+
+            <!-- Botón Eliminar -->
+            <button
+              class="inline-flex items-center justify-center p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+              title="Eliminar"
+              onclick="deleteReceipt(${receipt.id})"
+            >
+              <i data-lucide="trash" class="size-4"></i>
+            </button>
+          </div>
+
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-center">
           <button onclick="toggleReceiptDetail('${receipt.id}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
@@ -475,6 +422,33 @@ function renderReceiptsTable(receipts) {
   });
   
   tbody.innerHTML = html;
+}
+
+function editReceipt(receiptId) {
+
+  const receipt = {...appState.receipts.find(r => r.id === receiptId), showSucchessAlert: false};
+  appState.currentFormData = receipt;
+  receipt.categoria = receipt.categoriaId || '';
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showFormWithData(receipt);
+}
+
+async function deleteReceipt(receiptId) {
+  if (confirm('¿Estás seguro de que deseas eliminar esta boleta? Esta acción no se puede deshacer.')) {
+  const result = await fetch(`/invoices/${receiptId}`, {
+      method: 'DELETE',
+      headers: {
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      }
+    });
+    if (result.ok) {
+      appState.receipts = appState.receipts.filter(r => r.id !== receiptId);
+      window.location.reload();
+    } else {
+      alert('Error al eliminar la boleta. Intenta nuevamente.');
+    }
+  }
 }
 
 function renderReceiptDetail(receipt) {
@@ -668,11 +642,12 @@ function displaySelectedFile(file) {
 function manualUpload(){
   showFormWithData({
     rut: '',
+    showSucchessAlert: false,
     razonSocial: '',
     giro: '',
     direccion: '',
     comuna: '',
-    folio: '',
+    folio: 'No disponible',
     fecha: '',
     categoria: '',
     items: []
@@ -726,7 +701,7 @@ async function processFile() {
       method: 'POST',
       body: formData,
       headers: {
-        'X-CSRF-Token': csrfToken // <─ Aquí se envía el token
+        'X-CSRF-Token': csrfToken
       }
     });
 
@@ -761,12 +736,22 @@ function showFormWithData(data) {
   // Llenar campos del formulario
   document.getElementById('rut').value = data.rut;
   document.getElementById('razon_social').value = data.razonSocial;
-  document.getElementById('giro').value = data.giro;
+  // document.getElementById('giro').value = data.giro;
   document.getElementById('direccion').value = data.direccion;
   document.getElementById('comuna').value = data.comuna;
-  document.getElementById('folio').value = data.folio;
+  // document.getElementById('folio').value = 'No disponible';
   document.getElementById('fecha').value = data.fecha.split('T')[0];
   document.getElementById('categoria').value = data.categoria;
+
+  if(data.id && document.getElementById('invoice_id')){
+    document.getElementById('invoice_id').value = data.id;
+  }
+
+  if(hasNonEmptyKey(data, 'showSucchessAlert')){
+    document.getElementById('form-success-alert').classList.add('hidden');
+  } else {
+    document.getElementById('form-success-alert').classList.remove('hidden');
+  }
   
   // Limpiar items previos
   const itemsContainer = document.getElementById('items-container');
@@ -880,11 +865,12 @@ async function handleFormSubmit(event) {
   event.preventDefault();
   
   const formData = new FormData(event.target);
+  const invoice_id = formData.get('invoice_id') || null;
 
   const newInvoice = {
-    invoice: {  // clave 'invoice' porque tu controller usa params.require(:invoice)
+    invoice: { 
       billed_at: formData.get('fecha'),
-      category_id: parseInt(formData.get('categoria') || 1), // Ajusta según tu categoría
+      category_id: parseInt(formData.get('categoria') || 1),
       issuer: formData.get('razon_social'),
       city_name: formData.get('comuna'),
       address: formData.get('direccion'),
@@ -898,20 +884,20 @@ async function handleFormSubmit(event) {
   itemRows.forEach(row => {
     const item = {
       name: row.querySelector('[name*="[descripcion]"]').value,
-      qtty: parseInt(row.querySelector('[name*="[cantidad]"]').value),
+      qtty: parseFloat(row.querySelector('[name*="[cantidad]"]').value),
       price: parseInt(row.querySelector('[name*="[precio_unitario]"]').value),
     };
     newInvoice.invoice.invoice_items_attributes.push(item);
   });
     
-  // Enviar datos al backend
-  // console.log("Enviando nueva factura al backend:", newInvoice);
-  // return 0;
   try {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    const response = await fetch('/invoices', {
-      method: 'POST',
+    const url = invoice_id ? `/invoices/${invoice_id}` : '/invoices';
+    const method = invoice_id ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method: method,
       headers: {
         'Content-Type': 'application/json',
         'X-CSRF-Token': csrfToken

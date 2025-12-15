@@ -1,28 +1,5 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
 ## Instalación
 ### Clonar el repositorio
 ```bash
@@ -39,6 +16,16 @@ bundle -v
 ### Instalar las dependencias
 ```bash
 bundle install
+```
+### Crear el usuario de la DB
+```sql
+CREATE USER rails_user 
+WITH PASSWORD 'rails_pass0970#$' 
+SUPERUSER;
+```
+### Crear y completar el archivo .env
+```env
+GEMINI_API_KEY=YOUR_API_KEY
 ```
 ### Crear la DB
 ```bash

@@ -28,8 +28,18 @@ class InvoicesController < ApplicationController
 
   # PATCH/PUT /invoices/:id
   def update
-    if @invoice.update(invoice_params)
-      render json: @invoice, include: [:category, :invoice_items]
+    ActiveRecord::Base.transaction do
+      # Eliminar ítems anteriores
+      @invoice.invoice_items.destroy_all
+
+      # Actualizar factura + recrear ítems
+      unless @invoice.update(invoice_params)
+        raise ActiveRecord::Rollback
+      end
+    end
+
+    if @invoice.errors.empty?
+      render json: @invoice.reload, include: [:category, :invoice_items]
     else
       render json: { errors: @invoice.errors.full_messages }, status: :unprocessable_entity
     end

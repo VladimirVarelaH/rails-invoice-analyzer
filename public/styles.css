@@ -42,7 +42,7 @@ body {
   transition: opacity 0.3s ease-in-out;
 }
 
-.view-container.hidden {
+.view-container.hidden, .hidden {
   display: none;
 }
 
