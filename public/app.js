@@ -794,6 +794,7 @@ function addFormItem(itemData = null, index = null) {
           <input type="number" 
                  name="items[${itemIndex}][cantidad]" 
                  value="${item.cantidad}"
+                 step="0.00001"
                  onchange="updateItemTotal(this)"
                  class="item-cantidad w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
                  required>
@@ -838,9 +839,9 @@ function removeFormItem(button) {
 
 function updateItemTotal(input) {
   const row = input.closest('.item-row');
-  const cantidad = parseInt(row.querySelector('.item-cantidad').value) || 0;
-  const precio = parseInt(row.querySelector('.item-precio').value) || 0;
-  const total = cantidad * precio;
+  const cantidad = parseFloat(row.querySelector('.item-cantidad').value) || 0;
+  const precio = Math.ceil(row.querySelector('.item-precio').value) || 0;
+  const total = Math.ceil(cantidad * precio);
   row.querySelector('.item-total').value = total;
   calculateFormTotals();
 }
@@ -850,8 +851,9 @@ function calculateFormTotals() {
 
   let total = 0;
   itemTotals.forEach((input) => {
-    total += parseInt(input.value) || 0;
+    total += parseFloat(input.value) || 0;
   });
+  total = parseInt(total);
 
   const subtotal = Math.round(total / 1.19);
   const iva = Math.round(total - subtotal);
