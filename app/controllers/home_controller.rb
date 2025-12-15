@@ -36,6 +36,7 @@ class HomeController < ApplicationController
     prompt = <<~PROMPT
       Extrae la información de la factura y responde solo con un JSON válido
       que cumpla este JSON Schema exactamente. No incluyas explicación ni texto adicional.
+      Los descuentos deben ser representados como números negativos.
   
       #{File.read(Rails.root.join("app", "assets", "invoice_schema.json"))}
     PROMPT

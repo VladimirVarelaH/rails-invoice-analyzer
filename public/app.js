@@ -820,7 +820,6 @@ function addFormItem(itemData = null, index = null) {
                  value="${item.precioUnitario}"
                  onchange="updateItemTotal(this)"
                  class="item-precio w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                 min="0" 
                  required>
         </div>
         <div class="md:col-span-2">
