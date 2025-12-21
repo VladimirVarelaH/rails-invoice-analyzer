@@ -41,7 +41,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 gem "json"        
-gem "base64", "~> 0.2.0" 
+gem "base64", "~> 0.3.0" 
 gem "dotenv", "~> 3.0"   
 gem "faraday", "~> 2.10" 
 gem "net-http"           
